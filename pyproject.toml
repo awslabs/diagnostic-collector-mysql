@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "diagnostic-collector-mysql"
+version = "1.1.0"
+description = "A database health check and reporting tool for MySQL, Aurora MySQL, and MariaDB"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT-0"}
+authors = [
+    {name = "AWS"},
+]
+keywords = ["mysql", "aurora", "mariadb", "database", "health-check", "diagnostics"]
+dependencies = [
+    "mysql-connector-python>=9.6.0,<10",
+]
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.152.1",
+    "pytest>=9.0.3",
+    "ruff>=0.15.11",
+]
+
+[project.scripts]
+diagnostic-collector-mysql = "diagnostic_collector_mysql.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["diagnostic_collector_mysql"]
+
+[tool.ruff.lint]
+select = ["TID252"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"

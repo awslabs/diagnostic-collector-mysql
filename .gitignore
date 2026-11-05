@@ -1,0 +1,33 @@
+# Python bytecode
+__pycache__/
+
+# Testing
+.hypothesis/
+.pytest_cache/
+.coverage
+
+# OS generated
+.DS_Store
+
+# Private keys and certificates
+*.pem
+*.key
+*.crt
+
+# Collector output, which contains server metadata
+*.log
+diagnostic_collector_mysql_data_*/
+
+# Distribution / packaging
+dist/
+build/
+
+# Virtual environments
+venv/
+env/
+.env
+test_collection_*/
+.venv/
+
+# Local AI assistant configuration
+.kiro/
