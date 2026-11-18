@@ -1,3 +1,6 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
 """
 Unit tests for report behaviour when a subsection has no rows to show.
 
@@ -24,8 +27,8 @@ from diagnostic_collector_mysql.reporting.report_generator import (
     TextReportGenerator,
 )
 
-MTS_SOURCE = 'parallel_replication_worker_stats'
-MTS_NOTE = 'Multi-threaded replication not configured or no worker threads active'
+MTR_SOURCE = 'parallel_replication_worker_stats'
+MTR_NOTE = 'Multi-threaded replication not configured or no worker threads active'
 
 
 def _log(query_id, columns, rows, success=True, error=None):
@@ -41,10 +44,10 @@ def _log(query_id, columns, rows, success=True, error=None):
 
 def _subsection():
     return ReportSubsection(
-        name='Parallel Replication (MTS) Details',
-        source=MTS_SOURCE,
+        name='Parallel Replication (MTR) Details',
+        source=MTR_SOURCE,
         columns=[],
-        default_note=MTS_NOTE,
+        default_note=MTR_NOTE,
     )
 
 
@@ -94,7 +97,7 @@ class TestHealthQueryGating(unittest.TestCase):
         self.assertEqual(gated, [], f'Health checks gated on performance_schema: {gated}')
 
 
-class MTSNoDataTestCase(unittest.TestCase):
+class MTRNoDataTestCase(unittest.TestCase):
     """Workers configured, but the per-worker join returned nothing."""
 
     def setUp(self):
@@ -112,7 +115,7 @@ class MTSNoDataTestCase(unittest.TestCase):
                 ['replica_parallel_workers', 'replica_parallel_type'],
                 [(16, 'LOGICAL_CLOCK')],
             ),
-            MTS_SOURCE: _log(MTS_SOURCE, [], []),
+            MTR_SOURCE: _log(MTR_SOURCE, [], []),
         }
 
     def _markdown(self):
@@ -125,7 +128,7 @@ class MTSNoDataTestCase(unittest.TestCase):
         return JSONReportGenerator(report_format=self.report_format)
 
 
-class TestMarkdownEmitsTheNote(MTSNoDataTestCase):
+class TestMarkdownEmitsTheNote(MTRNoDataTestCase):
     def test_note_is_rendered(self):
         out = self._markdown()._generate_parallel_replication_subsection(
             self.subsection, self.logs
@@ -136,8 +139,8 @@ class TestMarkdownEmitsTheNote(MTSNoDataTestCase):
         self.assertIn('Parallel Replication', out)
 
     def test_query_failure_is_rendered(self):
-        self.logs[MTS_SOURCE] = _log(
-            MTS_SOURCE, None, None, success=False, error='Access denied'
+        self.logs[MTR_SOURCE] = _log(
+            MTR_SOURCE, None, None, success=False, error='Access denied'
         )
         out = self._markdown()._generate_parallel_replication_subsection(
             self.subsection, self.logs
@@ -145,25 +148,25 @@ class TestMarkdownEmitsTheNote(MTSNoDataTestCase):
         self.assertIn('Access denied', out)
 
 
-class TestTextEmitsTheNote(MTSNoDataTestCase):
+class TestTextEmitsTheNote(MTRNoDataTestCase):
     def test_note_is_rendered(self):
         out = self._text()._generate_parallel_replication_subsection(
             self.subsection, self.logs
         )
-        self.assertIn(MTS_NOTE, out)
+        self.assertIn(MTR_NOTE, out)
 
 
-class TestJsonStillEmitsTheNote(MTSNoDataTestCase):
+class TestJsonStillEmitsTheNote(MTRNoDataTestCase):
     """JSON already behaved correctly; this pins it so the four stay in step."""
 
     def test_note_is_present(self):
         result = self._json()._generate_parallel_replication_subsection(
             self.subsection, self.logs
         )
-        self.assertEqual(result.get('default_note'), MTS_NOTE)
+        self.assertEqual(result.get('default_note'), MTR_NOTE)
 
 
-class TestHtmlEmitsTheNote(MTSNoDataTestCase):
+class TestHtmlEmitsTheNote(MTRNoDataTestCase):
     """The HTML path is a section-level renderer with a different signature from the
     other three, which is why it needs its own coverage rather than being assumed
     to behave like them."""
@@ -172,23 +175,23 @@ class TestHtmlEmitsTheNote(MTSNoDataTestCase):
         out = HTMLReportGenerator(
             report_format=self.report_format
         )._generate_parallel_replication_section(self.logs)
-        self.assertIn(MTS_NOTE, out)
-        self.assertIn('Parallel Replication (MTS) Details', out)
+        self.assertIn(MTR_NOTE, out)
+        self.assertIn('Parallel Replication (MTR) Details', out)
 
     def test_note_is_resolved_from_report_format(self):
         """The renderer has no subsection in scope, so it looks the text up by
         source id. A report_format without the note falls back rather than raising."""
         generator = HTMLReportGenerator(report_format=self.report_format)
         self.assertEqual(
-            generator._default_note_for_source(MTS_SOURCE, 'fallback'), MTS_NOTE
+            generator._default_note_for_source(MTR_SOURCE, 'fallback'), MTR_NOTE
         )
         self.assertEqual(
             generator._default_note_for_source('no_such_query', 'fallback'), 'fallback'
         )
 
     def test_query_failure_is_rendered(self):
-        self.logs[MTS_SOURCE] = _log(
-            MTS_SOURCE, None, None, success=False, error='Access denied'
+        self.logs[MTR_SOURCE] = _log(
+            MTR_SOURCE, None, None, success=False, error='Access denied'
         )
         out = HTMLReportGenerator(
             report_format=self.report_format
@@ -196,7 +199,7 @@ class TestHtmlEmitsTheNote(MTSNoDataTestCase):
         self.assertIn('Access denied', out)
 
 
-class TestAllFormatsAgree(MTSNoDataTestCase):
+class TestAllFormatsAgree(MTRNoDataTestCase):
     def test_no_format_stays_silent(self):
         """All four formats read the same authored note, so silence in any one of
         them is a divergence between formats rather than a property of the data."""
@@ -219,7 +222,7 @@ class TestAllFormatsAgree(MTSNoDataTestCase):
 
 
 class TestSubsectionsCarryANote(unittest.TestCase):
-    def test_mts_subsection_has_a_default_note_to_emit(self):
+    def test_mtr_subsection_has_a_default_note_to_emit(self):
         """The renderers above depend on this text existing in report_format.json."""
         with open(get_data_path('report_format.json'), encoding='utf-8') as handle:
             data = json.load(handle)
@@ -227,10 +230,10 @@ class TestSubsectionsCarryANote(unittest.TestCase):
             sub.get('default_note')
             for section in data['sections']
             for sub in section.get('subsections', [])
-            if sub.get('source') == MTS_SOURCE
+            if sub.get('source') == MTR_SOURCE
         ]
-        self.assertTrue(notes, 'No MTS subsection found in report_format.json')
-        self.assertTrue(all(notes), 'MTS subsection is missing its default_note')
+        self.assertTrue(notes, 'No MTR subsection found in report_format.json')
+        self.assertTrue(all(notes), 'MTR subsection is missing its default_note')
 
 
 class TestJsonHealthKeyIsDocumented(unittest.TestCase):

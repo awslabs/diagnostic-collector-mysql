@@ -75,7 +75,7 @@ Every report begins with a Health Overview section that provides an at-a-glance 
 | Check | Warning Threshold | Critical Threshold |
 |-------|-------------------|-------------------|
 | Redo Log Occupancy | >60% | >80% |
-| Tables Without Primary Key | Any | - |
+| Tables Without Primary Key | - | Any |
 | Empty Passwords | - | Any |
 | Connection Usage | >75% | >90% |
 | History List Length | >50,000 | >100,000 |
@@ -83,8 +83,26 @@ Every report begins with a Health Overview section that provides an at-a-glance 
 | Replication Lag | >10 seconds | >60 seconds |
 | Replication Errors | - | Any |
 | Auto-Increment >90% Full | - | Any |
-| Server Configuration Issues | Any | - |
+| Server Configuration | Any issue | - |
 | Disk Tmp Table % | >50% | >80% |
+| Anonymous Accounts | - | Any |
+| Wildcard Host Accounts | Any | - |
+| Long-Running Queries | >50 queries running >60 seconds | - |
+| Long-Running Transactions | Any open >5 minutes while idle, or >60 seconds while running a statement | - |
+| Deadlocks | Any since restart | - |
+| Unused Indexes | Informational, always OK | - |
+| FK Without Indexes | Any | - |
+| Non-InnoDB Tables | Any | - |
+| Stale Statistics | Any table with statistics >7 days old | - |
+| Instant DDL Row Versions | Any table >50 | Any table >150 |
+| Elevated Privileges Users | Informational, always OK | - |
+| Idle Connections >5min | >100 | - |
+| Query Failures | Any collection query failed | - |
+
+Two checks print a different name depending on their status. `Auto-Increment >90% Full`
+prints as `Auto-Increment Usage` when it is OK, and `Deadlocks` prints as
+`Deadlocks (since restart)` when it fires. `Query Failures` appears only when at least
+one query failed.
 
 A check appears in the Health Overview only when the data it reads was collected.
 Section flags, engine and version conditions, and an instance that does not expose
@@ -206,9 +224,9 @@ This indicates the transaction is running inefficient queries that are scanning 
 2. Optimizing the query WHERE clauses
 3. Breaking the transaction into smaller batches
 
-## Parallel Replication (MTS) Analysis
+## Parallel Replication (MTR) Analysis
 
-The Parallel Replication (MTS) Details section provides analysis of multi-threaded replication worker efficiency. This section only appears when:
+The Parallel Replication (MTR) Details section provides analysis of multi-threaded replication worker efficiency. This section only appears when:
 - The instance is a replica (has active replication connections)
 - `replica_parallel_workers` (or `slave_parallel_workers`) > 1
 
@@ -371,7 +389,7 @@ Complete replication configuration and health status.
 | Connected Replicas | List of replicas connected to this source |
 | Aurora Replica Host Status | Aurora Global Database replica lag (Aurora only) |
 | Replication Filters | Active replication filters (replicate-do-db, etc.) |
-| Parallel Replication (MTS) Details | Multi-threaded replication worker statistics with distribution analysis |
+| Parallel Replication (MTR) Details | Multi-threaded replication worker statistics with distribution analysis |
 
 ### 4. Performance Metrics (6 subsections)
 
@@ -1361,7 +1379,7 @@ We are grateful to the MySQL and MariaDB communities for building and maintainin
 
 ## Maintainers
 
-Diagnostic Collector for MySQL is maintained by Shiv Bhatt and Chelluru V N S S Vidyadhar. See [MAINTAINERS.md](MAINTAINERS.md).
+Diagnostic Collector for MySQL is maintained by Chelluru V N S S Vidyadhar and Shiv Bhatt. See [MAINTAINERS.md](MAINTAINERS.md).
 
 ## License
 

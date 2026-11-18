@@ -1,3 +1,6 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
 """Core database connection, query execution, and execution logging."""
 
 from diagnostic_collector_mysql.core.connection_manager import ConnectionManager

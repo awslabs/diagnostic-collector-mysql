@@ -1,3 +1,6 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
 """Bundled data files (queries.json, report_format.json) and path resolution helper."""
 
 import importlib.resources as pkg_resources

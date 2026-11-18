@@ -1,3 +1,6 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
 """
 Report Generator module for Diagnostic Collector for MySQL.
 
@@ -3079,7 +3082,7 @@ class HTMLReportGenerator:
         parsed_logs: Dict[str, ParsedLogFile]
     ) -> str:
         """
-        Generate the Parallel Replication (MTS) Details section.
+        Generate the Parallel Replication (MTR) Details section.
         
         This section shows worker thread efficiency for multi-threaded replication.
         Only displayed on replica instances when replica_parallel_workers > 1.
@@ -3153,8 +3156,8 @@ class HTMLReportGenerator:
         log_data = parsed_logs['parallel_replication_worker_stats']
         if not log_data.success:
             return f'''
-<div class="subsection" id="{self._emit_subsection_anchor_id('Parallel Replication (MTS) Details')}">
-    <h3>Parallel Replication (MTS) Details</h3>
+<div class="subsection" id="{self._emit_subsection_anchor_id('Parallel Replication (MTR) Details')}">
+    <h3>Parallel Replication (MTR) Details</h3>
     <div class="error-message">Query failed: {self._escape_html(log_data.error or "Unknown error")}</div>
 </div>'''
         
@@ -3170,14 +3173,14 @@ class HTMLReportGenerator:
                 'parallel_replication_worker_stats', 'No data returned'
             )
             return f'''
-<div class="subsection" id="{self._emit_subsection_anchor_id('Parallel Replication (MTS) Details')}">
-    <h3>Parallel Replication (MTS) Details</h3>
+<div class="subsection" id="{self._emit_subsection_anchor_id('Parallel Replication (MTR) Details')}">
+    <h3>Parallel Replication (MTR) Details</h3>
     <div class="no-data">{self._escape_html(no_data_message)}</div>
 </div>'''
         
         # Build the section HTML
         html = '''
-<h3>Parallel Replication (MTS) Details</h3>
+<h3>Parallel Replication (MTR) Details</h3>
 <div class="info">The multi-threaded replication enables multiple threads to apply replication events in parallel. The configuration is at global level which applies to all replication channels.</div>
 
 <h4>Replica Worker Thread Efficiency</h4>
@@ -3216,7 +3219,7 @@ class HTMLReportGenerator:
             
             # Generate interpretation if we have data
             if worker_stats:
-                html += self._generate_mts_efficiency_interpretation(
+                html += self._generate_mtr_efficiency_interpretation(
                     worker_stats, parallel_workers, parallel_type, dep_tracking
                 )
             
@@ -3226,7 +3229,7 @@ class HTMLReportGenerator:
         
         return html
     
-    def _generate_mts_efficiency_interpretation(
+    def _generate_mtr_efficiency_interpretation(
         self,
         worker_stats: list,
         parallel_workers: int,
@@ -3234,7 +3237,7 @@ class HTMLReportGenerator:
         dep_tracking: str
     ) -> str:
         """
-        Generate interpretation of MTS worker efficiency with actionable recommendations.
+        Generate interpretation of MTR worker efficiency with actionable recommendations.
         
         Analyzes the distribution of transactions across worker threads
         and provides specific action items based on configuration.
@@ -3620,7 +3623,7 @@ class HTMLReportGenerator:
             dep_tracking_html = ''
             logging_advice_html = ''
         
-        # Parallel Replication (MTS) Details section - only for MySQL and Aurora MySQL when parallel workers > 1
+        # Parallel Replication (MTR) Details section - only for MySQL and Aurora MySQL when parallel workers > 1
         parallel_replication_html = ''
         if engine_type in ('mysql', 'aurora-mysql'):
             parallel_replication_html = self._generate_parallel_replication_section(parsed_logs)
@@ -5234,9 +5237,9 @@ DO NOT drop indexes immediately! Indexes may be used infrequently (daily/weekly/
         <li><strong>Avoid Long-Running Transactions:</strong> Keep transactions short; long transactions block purge for all subsequent transactions</li>
         <li><strong>Optimize Workload:</strong> Use DROP PARTITION or DROP TABLE instead of DELETE for bulk deletion use cases (age-partitioned)</li>
         <li><strong>Secondary Indexes:</strong> Purge is slower with many secondary indexes. Review unused indexes with sys.schema_unused_indexes</li>
-        <li><strong>Table Sharding:</strong> Spread writes across multiple tables to increase number of purge threads for better parallelism</li>
+        <li><strong>Write Concentration:</strong> InnoDB assigns purge work to purge threads by table, so heavy DML on a single table is purged by one thread. This matters only when purge falls behind while no long-running transaction or read view holds it back</li>
         <li><strong>Instance Sizing:</strong> Ensure adequate CPU, memory (buffer pool), and I/O capacity for purge threads</li>
-        <li><strong>Aurora-Specific:</strong> In Aurora, purge performance scales to Serverless v2 scales on replicas. Consider aurora_read_replica_read_committed=ON</li>
+        <li><strong>Aurora-Specific:</strong> On Aurora MySQL, a long-running query on an Aurora Replica also blocks purge and raises the history list length. For reporting queries on a replica that can accept less strict consistency, run them with aurora_read_replica_read_committed=ON and READ COMMITTED isolation</li>
     </ul>
 </div>'''
         
@@ -8553,14 +8556,14 @@ The `binlog_transaction_dependency_tracking` variable is not available or not co
                 md += f"| {self._escape_markdown(str(channel))} | {thread_id} | {trx_count} | {pct}% |\n"
             
             if worker_stats:
-                md += self._generate_mts_interpretation_md(worker_stats, parallel_workers, parallel_type, dep_tracking)
+                md += self._generate_mtr_interpretation_md(worker_stats, parallel_workers, parallel_type, dep_tracking)
         except (ValueError, IndexError) as e:
             md += f"| Error | - | - | {self._escape_markdown(str(e))} |\n"
         
         return md + "\n"
     
-    def _generate_mts_interpretation_md(self, worker_stats: list, parallel_workers: int, parallel_type: str, dep_tracking: str) -> str:
-        """Generate Markdown interpretation of MTS worker efficiency."""
+    def _generate_mtr_interpretation_md(self, worker_stats: list, parallel_workers: int, parallel_type: str, dep_tracking: str) -> str:
+        """Generate Markdown interpretation of MTR worker efficiency."""
         if not worker_stats:
             return ''
         
@@ -9119,9 +9122,9 @@ The `binlog_transaction_dependency_tracking` variable is not available or not co
 > * **Avoid Long-Running Transactions:** Keep transactions short; long transactions block purge for all subsequent transactions
 > * **Optimize Workload:** Use DROP PARTITION or DROP TABLE instead of DELETE for bulk deletion use cases (age-partitioned)
 > * **Secondary Indexes:** Purge is slower with many secondary indexes. Review unused indexes with sys.schema_unused_indexes
-> * **Table Sharding:** Spread writes across multiple tables to increase number of purge threads for better parallelism
+> * **Write Concentration:** InnoDB assigns purge work to purge threads by table, so heavy DML on a single table is purged by one thread. This matters only when purge falls behind while no long-running transaction or read view holds it back
 > * **Instance Sizing:** Ensure adequate CPU, memory (buffer pool), and I/O capacity for purge threads
-> * **Aurora-Specific:** In Aurora, purge performance scales to Serverless v2 scales on replicas. Consider aurora_read_replica_read_committed=ON
+> * **Aurora-Specific:** On Aurora MySQL, a long-running query on an Aurora Replica also blocks purge and raises the history list length. For reporting queries on a replica that can accept less strict consistency, run them with aurora_read_replica_read_committed=ON and READ COMMITTED isolation
 """
         
         # Build Purge Health Status
@@ -12250,15 +12253,15 @@ class TextReportGenerator:
             
             # Add interpretation
             if worker_stats:
-                lines.extend(self._generate_mts_interpretation_text(worker_stats, parallel_workers, parallel_type, dep_tracking))
+                lines.extend(self._generate_mtr_interpretation_text(worker_stats, parallel_workers, parallel_type, dep_tracking))
         except (ValueError, IndexError) as e:
             lines.append(f"  Error: {str(e)}")
         
         lines.append('')
         return '\n'.join(lines)
     
-    def _generate_mts_interpretation_text(self, worker_stats: list, parallel_workers: int, parallel_type: str, dep_tracking: str) -> list:
-        """Generate plain text interpretation of MTS worker efficiency."""
+    def _generate_mtr_interpretation_text(self, worker_stats: list, parallel_workers: int, parallel_type: str, dep_tracking: str) -> list:
+        """Generate plain text interpretation of MTR worker efficiency."""
         lines = ['Worker Efficiency Analysis', '-' * 30]
         
         channels = {}
@@ -12901,12 +12904,16 @@ class TextReportGenerator:
             '      bulk deletion use cases (age-partitioned)',
             '    * Secondary Indexes: Purge is slower with many secondary indexes. Review',
             '      unused indexes with sys.schema_unused_indexes',
-            '    * Table Sharding: Spread writes across multiple tables to increase number of',
-            '      purge threads for better parallelism',
+            '    * Write Concentration: InnoDB assigns purge work to purge threads by table,',
+            '      so heavy DML on a single table is purged by one thread. This matters only',
+            '      when purge falls behind while no long-running transaction or read view',
+            '      holds it back',
             '    * Instance Sizing: Ensure adequate CPU, memory (buffer pool), and I/O capacity',
             '      for purge threads',
-            '    * Aurora-Specific: In Aurora, purge performance scales to Serverless v2 scales',
-            '      on replicas. Consider aurora_read_replica_read_committed=ON',
+            '    * Aurora-Specific: On Aurora MySQL, a long-running query on an Aurora Replica',
+            '      also blocks purge and raises the history list length. For reporting queries',
+            '      on a replica that can accept less strict consistency, run them with',
+            '      aurora_read_replica_read_committed=ON and READ COMMITTED isolation',
             '',
         ])
         
@@ -16074,14 +16081,14 @@ class JSONReportGenerator:
             
             # Add analysis
             if worker_stats:
-                result['analysis'] = self._generate_mts_interpretation_json(worker_stats, parallel_workers, parallel_type, dep_tracking)
+                result['analysis'] = self._generate_mtr_interpretation_json(worker_stats, parallel_workers, parallel_type, dep_tracking)
         except (ValueError, IndexError) as e:
             result['error'] = str(e)
         
         return result
     
-    def _generate_mts_interpretation_json(self, worker_stats: list, parallel_workers: int, parallel_type: str, dep_tracking: str) -> Dict[str, Any]:
-        """Generate JSON interpretation of MTS worker efficiency."""
+    def _generate_mtr_interpretation_json(self, worker_stats: list, parallel_workers: int, parallel_type: str, dep_tracking: str) -> Dict[str, Any]:
+        """Generate JSON interpretation of MTR worker efficiency."""
         channels = {}
         for stat in worker_stats:
             channel = stat['channel']
@@ -16660,9 +16667,9 @@ class JSONReportGenerator:
             "Avoid Long-Running Transactions: Keep transactions short; long transactions block purge for all subsequent transactions",
             "Optimize Workload: Use DROP PARTITION or DROP TABLE instead of DELETE for bulk deletion use cases (age-partitioned)",
             "Secondary Indexes: Purge is slower with many secondary indexes. Review unused indexes with sys.schema_unused_indexes",
-            "Table Sharding: Spread writes across multiple tables to increase number of purge threads for better parallelism",
+            "Write Concentration: InnoDB assigns purge work to purge threads by table, so heavy DML on a single table is purged by one thread. This matters only when purge falls behind while no long-running transaction or read view holds it back",
             "Instance Sizing: Ensure adequate CPU, memory (buffer pool), and I/O capacity for purge threads",
-            "Aurora-Specific: In Aurora, purge performance scales to Serverless v2 scales on replicas. Consider aurora_read_replica_read_committed=ON"
+            "Aurora-Specific: On Aurora MySQL, a long-running query on an Aurora Replica also blocks purge and raises the history list length. For reporting queries on a replica that can accept less strict consistency, run them with aurora_read_replica_read_committed=ON and READ COMMITTED isolation"
         ]
         
         return {

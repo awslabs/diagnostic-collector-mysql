@@ -1,3 +1,6 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
 """Keep the maintainer credit in README.md and MAINTAINERS.md consistent.
 
 The public repository starts from a fresh history, so these two files are the
@@ -21,12 +24,26 @@ def test_maintainers_file_lists_at_least_one_maintainer():
     assert _maintainers_from_file(), "MAINTAINERS.md lists no maintainers"
 
 
-def test_readme_credits_every_maintainer_and_links_the_file():
+def _readme_maintainers_section():
     readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
     start = readme.index("## Maintainers")
     end = readme.index("\n## ", start + 1)
-    section = readme[start:end]
+    return readme[start:end]
+
+
+def test_readme_credits_every_maintainer_and_links_the_file():
+    section = _readme_maintainers_section()
 
     assert "(MAINTAINERS.md)" in section
     for name in _maintainers_from_file():
         assert name in section, f"README Maintainers section does not credit {name}"
+
+
+def test_readme_names_maintainers_in_the_same_order_as_the_file():
+    section = _readme_maintainers_section()
+    names = _maintainers_from_file()
+    positions = [section.index(name) for name in names if name in section]
+    assert len(positions) == len(names), "README Maintainers section misses a maintainer"
+    assert positions == sorted(positions), (
+        f"README names the maintainers in a different order from MAINTAINERS.md ({names})"
+    )

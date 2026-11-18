@@ -185,7 +185,7 @@
           "default_note": "No replication filters configured"
         },
         {
-          "name": "Parallel Replication (MTS) Details",
+          "name": "Parallel Replication (MTR) Details",
           "source": "parallel_replication_worker_stats",
           "columns": ["CHANNEL_NAME", "replica_worker_thread_id", "number_of_trx_executed", "percent_of_trx_executed_by_worker"],
           "condition": {"engine": ["mysql", "aurora-mysql"]},
