@@ -1,0 +1,1203 @@
+{
+  "sections": [
+    {
+      "name": "Server Information & Version Details",
+      "number": "1",
+      "short_name": "Server Info",
+      "subsections": [
+        {
+          "name": "Engine Version",
+          "source": "server_version",
+          "columns": ["version"],
+          "condition": {"engine": ["mysql", "aurora-mysql", "mariadb"]},
+          "min_engine_version": "",
+          "max_engine_version": ""
+        },
+        {
+          "name": "Aurora Version",
+          "source": "aurora_version",
+          "columns": ["aurora_version"],
+          "condition": {"engine": ["aurora-mysql"]}
+        },
+        {
+          "name": "Server Hostname",
+          "source": "server_hostname",
+          "columns": ["hostname"]
+        },
+        {
+          "name": "Server UUID",
+          "source": "server_uuid",
+          "columns": ["server_uuid"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]}
+        },
+        {
+          "name": "Server Port",
+          "source": "server_port",
+          "columns": ["port"]
+        },
+        {
+          "name": "Data Directory",
+          "source": "server_datadir",
+          "columns": ["datadir"]
+        },
+        {
+          "name": "Character Set",
+          "source": "server_charset",
+          "columns": ["character_set", "collation"]
+        },
+        {
+          "name": "Time Zone",
+          "source": "server_timezone",
+          "columns": ["system_time_zone", "session_time_zone"]
+        },
+        {
+          "name": "Server Uptime",
+          "source": "server_uptime",
+          "columns": [
+            "uptime_seconds",
+            {"name": "uptime_days", "expr": "Value / 86400"}
+          ]
+        },
+        {
+          "name": "Read Only Status",
+          "source": "server_read_only",
+          "columns": ["read_only", "innodb_read_only"]
+        },
+        {
+          "name": "Performance Schema Status",
+          "source": "performance_schema_status",
+          "columns": ["performance_schema_enabled"]
+        },
+        {
+          "name": "Performance Schema Consumers",
+          "source": "performance_schema_consumers",
+          "columns": ["NAME", "ENABLED"]
+        },
+        {
+          "name": "Performance Schema Instruments",
+          "source": "performance_schema_instruments",
+          "columns": ["instrument_class", "total_count", "enabled_count"]
+        }
+      ]
+    },
+
+    {
+      "name": "Non-Default Configuration Variables",
+      "number": "1.5",
+      "short_name": "Non-Defaults",
+      "subsections": [
+        {
+          "name": "Variables Changed from Default",
+          "source": "non_default_variables",
+          "columns": ["VARIABLE_NAME", "VARIABLE_VALUE", "MIN_VALUE", "MAX_VALUE", "VARIABLE_SOURCE", "SET_BY", "SET_TIME", "CONFIG_PATH"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]}
+        },
+        {
+          "name": "Configuration Warnings",
+          "source": "config_warnings_check",
+          "columns": ["Parameter", "Message"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "default_note": "No configuration warnings - all checked parameters are optimally configured"
+        }
+      ]
+    },
+    {
+      "name": "Replication Topology & Status",
+      "number": "2",
+      "short_name": "Replication",
+      "subsections": [
+        {
+          "name": "Replication Role",
+          "source": "replication_role",
+          "columns": ["replication_role"]
+        },
+        {
+          "name": "Binary Log Status",
+          "source": "binary_log_status",
+          "columns": ["File", "Position", "Binlog_Do_DB", "Binlog_Ignore_DB", "Executed_Gtid_Set"],
+          "condition": {"engine": ["aurora-mysql", "mysql"]},
+          "min_engine_version": "",
+          "max_engine_version": "8.1"
+        },
+        {
+          "name": "Binary Log Status",
+          "source": "binary_log_status",
+          "columns": ["File", "Position", "Binlog_Do_DB", "Binlog_Ignore_DB", "Executed_Gtid_Set"],
+          "condition": {"engine": ["mariadb"]}
+        },
+        {
+          "name": "Binary Log Status",
+          "source": "binary_log_status",
+          "columns": ["File", "Position", "Binlog_Do_DB", "Binlog_Ignore_DB", "Executed_Gtid_Set"],
+          "condition": {"engine": ["aurora-mysql", "mysql"]},
+          "min_engine_version": "8.2",
+          "max_engine_version": ""
+        },
+        {
+          "name": "GTID Configuration",
+          "source": "gtid_status",
+          "columns": ["gtid_mode", "enforce_gtid_consistency"],
+          "condition": {"engine": ["aurora-mysql", "mysql"]}
+        },
+        {
+          "name": "Replica Status",
+          "source": "replica_status",
+          "columns": ["Source_Host", "Source_Port", "Source_User", "Replica_IO_Running", "Replica_SQL_Running", "Seconds_Behind_Source", "Last_Error"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "min_engine_version": "8.0.23",
+          "max_engine_version": "",
+          "default_note": "No replication configured or server is a primary"
+        },
+        {
+          "name": "Replica Status",
+          "source": "replica_status",
+          "columns": ["Master_Host", "Master_Port", "Master_User", "Slave_IO_Running", "Slave_SQL_Running", "Seconds_Behind_Master", "Last_Error"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "min_engine_version": "",
+          "max_engine_version": "8.0.24",
+          "default_note": "No replication configured or server is a primary"
+        },
+        {
+          "name": "Replica Status",
+          "source": "replica_status",
+          "columns": ["Master_Host", "Master_Port", "Master_User", "Slave_IO_Running", "Slave_SQL_Running", "Seconds_Behind_Master", "Last_Error"],
+          "condition": {"engine": ["mariadb"]},
+          "default_note": "No replication configured or server is a primary"
+        },
+        {
+          "name": "Connected Replicas",
+          "source": "connected_replicas",
+          "columns": ["SERVER_ID", "HOST", "USER", "COMMAND", "TIME"],
+          "default_note": "No replicas connected to this primary"
+        },
+        {
+          "name": "Aurora Replica Host Status",
+          "source": "aurora_global_db_status",
+          "columns": ["SERVER_ID", "SESSION_ID", "LAST_UPDATE_TIMESTAMP", "REPLICA_LAG_IN_MILLISECONDS", "OLDEST_READ_VIEW_TRX_ID", "OLDEST_READ_VIEW_LSN"],
+          "condition": {"engine": ["aurora-mysql"]},
+          "default_note": "Aurora Global Database not configured"
+        },
+        {
+          "name": "Replication Filters",
+          "source": "replication_filters",
+          "columns": ["CHANNEL_NAME", "FILTER_NAME", "FILTER_RULE", "CONFIGURED_BY", "COUNTER"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "default_note": "No replication filters configured"
+        },
+        {
+          "name": "Parallel Replication (MTR) Details",
+          "source": "parallel_replication_worker_stats",
+          "columns": ["CHANNEL_NAME", "replica_worker_thread_id", "number_of_trx_executed", "percent_of_trx_executed_by_worker"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "default_note": "Multi-threaded replication not configured or no worker threads active",
+          "note": "The multi-threaded replication enables multiple threads to apply replication events in parallel. The configuration is at global level which applies to all replication channels."
+        },
+        {
+          "name": "Aurora MySQL Replication",
+          "source": "aurora_relay_log_status",
+          "columns": ["VARIABLE_NAME", "VARIABLE_VALUE", "Details"],
+          "condition": {"engine": ["aurora-mysql"]},
+          "note": "Aurora MySQL in-memory relay log status and replication throughput. In-memory relay log improves replica performance by avoiding disk I/O for relay log operations.",
+          "default_note": "Aurora in-memory relay log status not available"
+        },
+        {
+          "name": "Aurora Replication Throughput",
+          "source": "aurora_repl_throughput",
+          "columns": ["VARIABLE_NAME", "VARIABLE_VALUE", "Details"],
+          "condition": {"engine": ["aurora-mysql"]},
+          "note": "Aurora replication throughput monitoring. Aurora_repl_bytes_received tracks total bytes received from the replication source.",
+          "default_note": "Aurora replication throughput metrics not available"
+        }
+      ]
+    },
+
+    {
+      "name": "Performance Metrics",
+      "number": "3",
+      "short_name": "Performance",
+      "subsections": [
+        {
+          "name": "Key Performance Counters",
+          "source": "key_performance_counters",
+          "columns": ["Queries Per Second", "Total Queries", "Slow Queries", "Threads Connected", "Threads Running", "Aborted Connections", "Aborted Clients"],
+          "default_note": "Performance counter statistics not available"
+        },
+        {
+          "name": "Temporary Table Usage",
+          "source": "temp_table_usage",
+          "columns": ["Created Tmp Tables", "Created Tmp Disk Tables", "Disk Tmp Table %"],
+          "default_note": "Temporary table statistics not available",
+          "note": "Temporary tables on disk are slower than in-memory. High disk temp tables suggest queries need optimization or tmp_table_size increase."
+        },
+        {
+          "name": "Wait Events by Latency (sys schema)",
+          "source": "waits_global_by_latency",
+          "columns": ["events", "total_latency", "avg_latency", "max_latency", "total"],
+          "default_note": "sys schema not available or no wait events recorded",
+          "note": "Shows which wait events consume the most time. Helps identify I/O, lock, or synchronization bottlenecks.",
+          "warning": "High latency on I/O events (io/file/*) suggests storage bottlenecks. High latency on lock events (wait/synch/*) indicates contention. Use this to identify system-level performance issues."
+        },
+        {
+          "name": "Stale Statistics",
+          "source": "stale_statistics",
+          "columns": ["database_name", "table_name", "last_update"],
+          "default_note": "No tables with stale statistics (older than 7 days)",
+          "note": "Outdated index statistics lead to sub-optimal query plans and performance degradation"
+        },
+        {
+          "name": "Query Type Distribution",
+          "source": "query_type_distribution",
+          "columns": ["query_type", "total_count", "per_second"],
+          "default_note": "No query statistics available (Performance Schema may be disabled)",
+          "note": "Shows the breakdown of query types. Helps understand workload characteristics."
+        },
+        {
+          "name": "Table Cache Statistics",
+          "source": "table_cache_stats",
+          "columns": ["Metric", "Value", "Explanation"],
+          "default_note": "Table cache statistics not available",
+          "note": "Table cache misses cause dictionary contention. High \"Opened tables\" relative to \"Open tables\" indicates cache is too small."
+        },
+        {
+          "name": "Aurora Parallel Query Configuration",
+          "source": "aurora_pq_config",
+          "columns": ["Variable_name", "Value", "Description"],
+          "condition": {"engine": ["aurora-mysql"]},
+          "note": "Aurora MySQL parallel query configuration. Parallel query can significantly improve performance for large analytical queries by pushing processing to the storage layer.",
+          "default_note": "Aurora parallel query configuration not available (requires Aurora MySQL)"
+        },
+        {
+          "name": "Aurora Parallel Query Status",
+          "source": "aurora_pq_status",
+          "columns": ["VARIABLE_NAME", "VARIABLE_VALUE", "Details"],
+          "condition": {"engine": ["aurora-mysql"]},
+          "note": "Aurora MySQL parallel query execution statistics. Monitor these to understand parallel query usage and identify optimization opportunities.",
+          "default_note": "Aurora parallel query status not available (requires Aurora MySQL)"
+        }
+      ]
+    },
+    {
+      "name": "Memory Configuration & Usage - Comprehensive Analysis",
+      "number": "4",
+      "short_name": "Memory",
+      "subsections": [
+        {
+          "name": "Global Memory Buffers (Configuration)",
+          "source": "global_memory_buffers",
+          "columns": ["Buffer", "Size (GB)", "Purpose"],
+          "default_note": "Global memory buffer configuration not available",
+          "note": "These buffers are allocated once at startup and shared across all connections."
+        },
+        {
+          "name": "Per-Connection Memory Buffers",
+          "source": "per_connection_memory",
+          "columns": ["Buffer", "Size (MB)", "Estimated Max Connections Memory", "Purpose"],
+          "default_note": "Per-connection memory configuration not available",
+          "note": "These buffers are allocated PER CONNECTION. Total memory = buffer_size × max_connections."
+        },
+        {
+          "name": "Global Memory Usage - Top Components",
+          "source": "global_memory_usage_top",
+          "columns": ["Component", "Current Alloc", "Current Count", "High Watermark", "High Count"],
+          "default_note": "Memory usage statistics not available (Performance Schema may be disabled)",
+          "note": "Actual memory usage by MySQL components from Performance Schema. Shows current allocation and high watermark."
+        },
+        {
+          "name": "Memory Usage by Thread",
+          "source": "memory_by_thread",
+          "columns": [
+            "THREAD_ID",
+            "PROCESSLIST_USER",
+            "PROCESSLIST_HOST",
+            "memory_bytes",
+            {"name": "memory_mb", "expr": "memory_bytes / 1048576"}
+          ],
+          "note": "Shows which threads (connections or background threads) are using the most memory. Use to identify memory-hungry connections."
+        },
+        {
+          "name": "Memory Usage by User Account",
+          "source": "memory_by_user",
+          "columns": ["USER", "Count", "Current Alloc"],
+          "note": "Memory consumption grouped by user account. Identifies which users/applications are consuming the most memory."
+        },
+        {
+          "name": "Memory Events - Prepared Statements & Connections",
+          "source": "memory_events_prepared_statements",
+          "columns": ["Event Name", "Current Alloc", "Current Count", "High Watermark", "Avg per Item"],
+          "default_note": "Memory event statistics not available (Performance Schema may be disabled)",
+          "note": "Specific memory events that commonly cause high memory usage."
+        },
+        {
+          "name": "Connection Memory Overhead",
+          "source": "connection_memory_overhead",
+          "columns": ["Current Connections", "Max Connections", "Avg Memory per Connection", "Total Connection Memory"],
+          "default_note": "Connection memory statistics not available"
+        },
+        {
+          "name": "Temporary Table Memory Usage",
+          "source": "temp_table_memory_usage",
+          "columns": ["tmp_table_size", "max_heap_table_size", "temptable_max_ram", "Created Tmp Tables", "Created Tmp Disk Tables", "Disk Tmp Table %"],
+          "default_note": "Temporary table memory statistics not available"
+        },
+        {
+          "name": "TempTable Engine Memory",
+          "source": "temptable_engine_memory",
+          "columns": ["Event", "Current Alloc", "High Watermark"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "default_note": "TempTable engine memory not available"
+        },
+        {
+          "name": "Sort & Join Buffer Memory",
+          "source": "sort_join_buffer_memory",
+          "columns": ["sort_buffer_size", "join_buffer_size", "read_buffer_size", "read_rnd_buffer_size", "Sort Merge Passes", "Sort Range", "Sort Scan"],
+          "default_note": "Sort/join buffer statistics not available",
+          "note": "Memory used for sorting and joining operations. High values may indicate missing indexes or inefficient queries."
+        },
+        {
+          "name": "InnoDB Buffer Pool Statistics (Detailed)",
+          "source": "innodb_buffer_pool_stats_detailed",
+          "columns": ["Buffer Pool Size (GB)", "Buffer Pool Instances", "Total Pages", "Data Pages", "Dirty Pages", "Free Pages", "Buffer Pool Hit Rate", "Dirty Page %"],
+          "default_note": "Buffer pool statistics not available",
+          "note": "Buffer pool hit rate is the most important memory metric. >99% is ideal."
+        },
+        {
+          "name": "Queries Using Most Memory",
+          "source": "queries_using_most_memory",
+          "columns": ["Schema", "Query Digest (first 80 chars)", "Exec Count", "Max Controlled Memory", "Max Total Memory", "First Seen", "Last Seen"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "min_engine_version": "8.0.16",
+          "max_engine_version": "",
+          "default_note": "Query memory statistics not available (requires MySQL 8.0.16+)",
+          "note": "Identifies queries with highest memory consumption from performance_schema.events_statements_summary_by_digest. Shows MAX_TOTAL_MEMORY since last reset."
+        },
+        {
+          "name": "Performance Schema Memory",
+          "source": "performance_schema_memory",
+          "columns": ["metric_name", "value"],
+          "display_type": "metric_cards",
+          "default_note": "Performance Schema memory statistics not available",
+          "note": "Total memory consumption by performance_schema engine."
+        },
+        {
+          "name": "Global Memory Total",
+          "source": "global_memory_total",
+          "columns": ["total_memory", "total_memory_instruments", "enabled_memory_instruments"],
+          "display_type": "cards",
+          "default_note": "Global memory total not available (requires sys schema)",
+          "note": "Total tracked memory from sys.memory_global_total. Memory instruments must be enabled for accurate tracking."
+        },
+        {
+          "name": "Memory Troubleshooting Tips",
+          "source": "memory_troubleshooting_tips",
+          "columns": [],
+          "display_type": "tips",
+          "tips": [
+            {"title": "High Memory Usage", "description": "Check section 4.3 (Global Memory Usage) to identify which components are consuming memory"},
+            {"title": "Memory Spikes", "description": "Look at \"High Watermark\" columns - they show peak memory usage even if current usage is low"},
+            {"title": "Per-Connection Issues", "description": "Check section 4.4 (Memory by Thread) to find memory-hungry connections"},
+            {"title": "Application Issues", "description": "Use section 4.5 (Memory by User) to identify which applications/users consume most memory"},
+            {"title": "Prepared Statement Memory", "description": "Check section 4.7 for prepared statement memory usage - common cause of memory issues"},
+            {"title": "Temporary Table Issues", "description": "Section 4.9 shows if queries are creating too many disk temp tables"},
+            {"title": "Reset Statistics", "description": "To reset high watermarks, run: TRUNCATE TABLE performance_schema.memory_summary_global_by_event_name;"}
+          ],
+          "default_note": ""
+        },
+        {
+          "name": "Aurora Memory Configuration",
+          "source": "aurora_memory_config",
+          "columns": ["Variable_name", "Value", "Description"],
+          "condition": {"engine": ["aurora-mysql"]},
+          "note": "Aurora MySQL memory management configuration. The aurora_oom_response parameter controls automatic actions when the DB instance is low on memory.",
+          "default_note": "Aurora memory configuration not available (requires Aurora MySQL)",
+          "result_note": "aurora_oom_response values:\n• decline - Declines new queries when the DB instance is low on memory\n• kill_connect - Closes database connections consuming large amounts of memory (Aurora MySQL v3 only)\n• kill_query - Ends queries in descending order of memory consumption until memory recovers\n• print - Only prints queries consuming large amounts of memory to the error log\n• tune - Tunes internal table caches (table_open_cache, table_definition_cache) to release memory\n• tune_buffer_pool - Decreases buffer pool size to release memory (Aurora MySQL v3.06+, requires kill_query or kill_connect)"
+        },
+        {
+          "name": "Aurora Memory Status",
+          "source": "aurora_memory_status",
+          "columns": ["VARIABLE_NAME", "VARIABLE_VALUE", "Details"],
+          "condition": {"engine": ["aurora-mysql"]},
+          "note": "Aurora MySQL memory status indicators. Monitor these variables to detect memory pressure and OOM avoidance activity.",
+          "default_note": "Aurora memory status not available (requires Aurora MySQL)"
+        }
+      ]
+    },
+
+    {
+      "name": "InnoDB Engine & Redo Log",
+      "number": "5",
+      "short_name": "InnoDB & Redo",
+      "note": "InnoDB redo logs record all changes for crash recovery. If redo logs completely utilized, writes operations will be stalled. History list length indicates purge lag - high values cause table bloat and slow queries. Monitor these closely!",
+      "subsections": [
+        {
+          "name": "Redo Log Status",
+          "source": "innodb_redo_log",
+          "columns": ["Variable_name", "Value"],
+          "condition": {"engine": ["mysql"]}
+        },
+        {
+          "name": "Redo Log Occupancy",
+          "source": "health_redo_log_occupancy",
+          "columns": ["redo_log_mb_used", "redo_log_pct_used"],
+          "display_type": "metric_cards",
+          "condition": {"engine": ["mysql"]},
+          "default_note": "Redo log metrics not available"
+        },
+        {
+          "name": "Transaction Summary",
+          "source": "transaction_summary",
+          "columns": ["total_transactions", "oldest_trx_age_seconds", "total_rows_locked", "total_modified_rows"],
+          "display_type": "metric_cards",
+          "requires_extended_checks": true,
+          "fallback_source": "transaction_summary_ps",
+          "fallback_columns": ["total_transactions", "oldest_trx_age_seconds"],
+          "extended_checks_disabled_note": "Enable --extended-checks to view transaction details from innodb_trx table (rows locked, rows modified). Querying information_schema.innodb_trx may cause contention on busy production systems."
+        },
+        {
+          "name": "InnoDB Configuration",
+          "source": "innodb_config_summary",
+          "columns": ["Parameter", "Value", "Recommendation"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "default_note": "InnoDB configuration summary not available"
+        },
+        {
+          "name": "InnoDB Row Operations",
+          "source": "innodb_row_operations",
+          "columns": ["Rows Read", "Rows Inserted", "Rows Updated", "Rows Deleted"],
+          "display_type": "metric_cards",
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "default_note": "Row operation statistics not available",
+          "note": "Shows read/write activity at the row level."
+        },
+        {
+          "name": "Buffer Pool Hit Rate",
+          "source": "health_buffer_pool_hit_rate",
+          "columns": ["buffer_pool_hit_rate"],
+          "display_type": "metric_cards",
+          "note": "The InnoDB buffer pool should be 70-80% of available RAM. Buffer pool hit rate >99% is ideal."
+        },
+        {
+          "name": "InnoDB Purge & Transaction Status",
+          "source": "innodb_purge_transaction_status",
+          "columns": ["Metric", "Value", "Details"],
+          "note": "Purge threads and purge lag configurations"
+        },
+        {
+          "name": "Long-Running Transactions",
+          "source": "long_running_transactions_analysis",
+          "columns": [],
+          "display_type": "composite",
+          "note": "Uncommitted transactions block purge operations and cause MVCC bloat. Long-running transactions should be investigated and resolved."
+        },
+        {
+          "name": "Long-Running Transactions Activity (Top 10 Recent Queries)",
+          "source": "long_running_trx_recent_queries",
+          "columns": ["mysql_pid", "trx_duration", "trx_state", "sql_text", "stmt_execution_time", "rows_sent", "rows_modified", "rows_examined", "tmp_disk_tables", "error_info"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "note": "Shows the 10 most recent SQL statements executed within each long-running transaction (>5 minutes). This helps identify what operations the transaction has performed.",
+          "default_note": "No long-running transactions (>5 minutes) currently active"
+        },
+        {
+          "name": "All Current Transactions Summary",
+          "source": "current_transactions_summary",
+          "columns": ["Total Active Transactions", "Oldest Transaction Age (seconds)"],
+          "display_type": "metric_cards",
+          "default_note": "No active transactions",
+          "note": "Overview of all currently running transactions.",
+          "requires_extended_checks": true,
+          "fallback_source": "current_transactions_summary_ps",
+          "fallback_columns": ["Total Active Transactions", "Oldest Transaction Age (seconds)"],
+          "extended_checks_disabled_note": "Enable --extended-checks to view transaction details from innodb_trx table. Querying information_schema.innodb_trx may cause contention on busy production systems."
+        },
+        {
+          "name": "History List Length",
+          "source": "innodb_history_length",
+          "columns": ["history_list_length"],
+          "display_type": "metric_cards",
+          "note": "History list length indicates purge lag - high values cause table bloat and slow queries."
+        },
+        {
+          "name": "InnoDB Change Buffer",
+          "source": "innodb_change_buffer",
+          "columns": ["NAME", "current_value", "STATUS"],
+          "condition": {"engine": ["mysql"]}
+        },
+        {
+          "name": "InnoDB Change Buffer",
+          "source": "innodb_change_buffer",
+          "columns": ["NAME", "current_value", "ENABLED"],
+          "condition": {"engine": ["mariadb"]}
+        },
+        {
+          "name": "InnoDB Purge Analysis",
+          "source": "innodb_purge_analysis",
+          "columns": [],
+          "display_type": "composite",
+          "condition": {"engine": ["mysql", "aurora-mysql"]}
+        },
+        {
+          "name": "Aurora InnoDB Note",
+          "source": "aurora_innodb_note",
+          "columns": [],
+          "display_type": "note",
+          "condition": {"engine": ["aurora-mysql"]},
+          "note": "Aurora MySQL uses a distributed storage layer that automatically manages I/O, flushing, and redo log sizing. Many traditional InnoDB tuning parameters are not applicable or modifiable in Aurora. Redo log sizing and flushing are managed automatically by Aurora's distributed storage layer. These configuration parameters do not apply to Aurora. Redo log management is handled automatically by Aurora's distributed storage layer. Redo log occupancy monitoring and sizing are not applicable to Aurora instances."
+        },
+        {
+          "name": "InnoDB Engine Status (Detailed Diagnostics)",
+          "source": "innodb_engine_status_analysis",
+          "columns": [],
+          "display_type": "composite",
+          "requires_extended_checks": true,
+          "extended_checks_disabled_note": "Enable --extended-checks to view detailed InnoDB engine diagnostics. SHOW ENGINE INNODB STATUS may cause brief mutex contention on busy systems."
+        }
+      ]
+    },
+
+    {
+      "name": "Table Analysis",
+      "number": "6",
+      "short_name": "Tables",
+      "note": "Tables without primary keys break row-based replication and cause performance issues. Fragmented tables waste disk space. Auto-increment exhaustion causes INSERT failures. Monitor these proactively!",
+      "subsections": [
+        {
+          "name": "Largest Tables",
+          "source": "largest_tables",
+          "columns": [
+            "TABLE_SCHEMA",
+            "TABLE_NAME",
+            "TABLE_ROWS",
+            "DATA_LENGTH",
+            "INDEX_LENGTH",
+            "total_size",
+            {"name": "total_size_mb", "expr": "total_size / 1048576"}
+          ],
+          "note": "Identifies your largest tables. Large tables need careful index and partition planning.",
+          "default_note": "No user tables found"
+        },
+        {
+          "name": "Storage Engine Distribution",
+          "source": "storage_engine_distribution",
+          "columns": ["ENGINE", "table_count", "total_size", "total_rows"],
+          "note": "InnoDB is recommended for all tables. MyISAM is deprecated and not crash-safe.",
+          "default_note": "No user tables found"
+        },
+        {
+          "name": "InnoDB Row Format Distribution",
+          "source": "innodb_row_format_distribution",
+          "columns": ["ROW_FORMAT", "table_count", "total_gb"],
+          "note": "Row format affects storage efficiency and performance. DYNAMIC is recommended for most workloads. COMPRESSED can save space but adds CPU overhead. Aurora MySQL does not support the COMPRESSED row format for InnoDB tables.",
+          "default_note": "No InnoDB tables found"
+        },
+        {
+          "name": "InnoDB Tables Compact or Redundant Row Format and Problematic Indexes",
+          "source": "innodb_compact_redundant_problematic_indexes",
+          "columns": ["table_schema", "table_name", "index_name", "INDEX_LEN"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "note": "Indexes on InnoDB tables (Redundant or Compact row format) that exceed the 767-byte prefix limit can cause index creation failures, data corruption, or mark tables as inaccessible after database restart.",
+          "default_note": "No problematic indexes found on Compact/Redundant row format tables",
+          "result_note": "⚠️ CRITICAL: Tables with problematic indexes detected! These indexes exceed the 767-byte prefix limit for Compact/Redundant row format. RECOMMENDATION: Change the row format to DYNAMIC at the earliest opportunity BEFORE the next database restart to prevent potential data accessibility issues. Use: ALTER TABLE schema.table ROW_FORMAT=DYNAMIC;"
+        },
+        {
+          "name": "Tables Without Primary Key",
+          "source": "tables_without_pk",
+          "columns": ["TABLE_SCHEMA", "TABLE_NAME", "ENGINE", "TABLE_ROWS"],
+          "note": "Tables without primary keys cause severe replication performance issues and can break replication entirely. In InnoDB, the primary key IS the table data (clustered index).",
+          "default_note": "All tables have primary keys - good!"
+        },
+        {
+          "name": "Fragmented Tables",
+          "source": "fragmented_tables",
+          "columns": [
+            "TABLE_SCHEMA",
+            "TABLE_NAME",
+            "DATA_LENGTH",
+            "DATA_FREE",
+            "fragmentation_pct"
+          ],
+          "note": "Fragmentation wastes disk space. Run OPTIMIZE TABLE to reclaim space (locks table during operation).",
+          "default_note": "No significantly fragmented tables found"
+        },
+        {
+          "name": "Auto Increment Usage (>50%)",
+          "source": "auto_increment_usage",
+          "columns": ["Schema", "Table", "Column", "Type", "usage_percentage", "max_value", "current_value"],
+          "note": "Auto-increment exhaustion causes INSERT failures. Monitor tables approaching limits and plan migrations.",
+          "default_note": "No tables with auto-increment columns at >50% usage"
+        },
+        {
+          "name": "User Tables Not Using InnoDB",
+          "source": "non_innodb_tables",
+          "columns": ["TABLE_SCHEMA", "TABLE_NAME", "ENGINE", "TABLE_ROWS", "DATA_LENGTH"],
+          "note": "InnoDB is the recommended storage engine for RDS and Aurora. Non-InnoDB tables may have compatibility or performance issues.",
+          "default_note": "All tables use InnoDB engine"
+        },
+        {
+          "name": "Instant DDL Column Tracking",
+          "source": "instant_ddl_tracking",
+          "columns": ["schema_name", "table_name", "instant_cols_pre_8029", "TOTAL_ROW_VERSIONS", "status"],
+          "default_note": "No tables with instant DDL row versions",
+          "result_note": "About Instant DDL:\n• INSTANT_COLS: Columns added with ALGORITHM=INSTANT before MySQL 8.0.29 (deprecated tracking method)\n• TOTAL_ROW_VERSIONS: Number of instant column operations (add/drop). Incremented by each instant ALTER, reset to 0 on table rebuild\n• Limit: Maximum 255 row versions (MySQL 9.1+) or 64 (earlier versions)\n• ⚠️ CRITICAL: Automatic Fallback: When a table reaches the instant DDL limit, MySQL automatically falls back to ALGORITHM=INPLACE which performs a full table rebuild. This is NOT instant and will lock the table during the operation, potentially causing significant downtime on large tables!\n• Proactive Reset: Before reaching the limit, manually rebuild tables during maintenance windows: ALTER TABLE table_name FORCE; or OPTIMIZE TABLE table_name;\n• Performance Impact: High row versions can degrade query performance. Plan periodic rebuilds for heavily modified tables\n• Monitoring: Track TOTAL_ROW_VERSIONS regularly. Tables >150 should be scheduled for rebuild before hitting the limit",
+          "min_engine_version": "8.0.29",
+          "max_engine_version": ""
+        }
+      ]
+    },
+
+    {
+      "name": "Index Analysis",
+      "number": "7",
+      "short_name": "Indexes",
+      "note": "Indexes speed up reads but slow down writes. Unused indexes waste space and impact INSERT/UPDATE performance. Duplicate indexes are redundant. Foreign keys without indexes cause table-level locks during updates.",
+      "subsections": [
+        {
+          "name": "Unused Indexes",
+          "source": "unused_indexes",
+          "columns": ["TABLE_SCHEMA", "TABLE_NAME", "INDEX_NAME", "COLUMN_NAME"],
+          "note": "Indexes never used since restart. Important: Make indexes INVISIBLE first (MySQL 8.0+) to safely test before dropping. See warning below for details.",
+          "default_note": "No unused indexes detected (or Performance Schema not tracking index usage)"
+        },
+        {
+          "name": "Duplicate Indexes",
+          "source": "duplicate_indexes",
+          "columns": ["TABLE_SCHEMA", "TABLE_NAME", "index1", "index2", "COLUMN_NAME"],
+          "note": "Duplicate indexes have identical leading columns. They waste storage space and slow down INSERT/UPDATE/DELETE operations. Review and drop the redundant index after verifying it's not used by specific queries.",
+          "default_note": "No duplicate indexes found"
+        },
+        {
+          "name": "Redundant Indexes (sys schema)",
+          "source": "redundant_indexes",
+          "columns": ["table_schema", "table_name", "redundant_index_name", "redundant_index_columns", "dominant_index_name", "dominant_index_columns", "sql_drop_index"],
+          "note": "Indexes that are redundant because another index covers the same columns. Safe to drop after verification. Note: The sys.schema_redundant_indexes view identifies indexes that are completely covered by other indexes. Review carefully before dropping, especially for unique constraints.",
+          "default_note": "No redundant indexes found"
+        },
+        {
+          "name": "Foreign Keys Without Indexes",
+          "source": "fk_without_indexes",
+          "columns": ["CONSTRAINT_SCHEMA", "TABLE_NAME", "CONSTRAINT_NAME", "COLUMN_NAME"],
+          "note": "Foreign key columns without indexes cause full table scans during parent table updates/deletes, leading to table-level locks and severe performance degradation. Add an index on each foreign key column to enable efficient lookups.",
+          "default_note": "All foreign key columns are indexed"
+        },
+        {
+          "name": "Index I/O Statistics",
+          "source": "index_io_stats",
+          "columns": ["OBJECT_SCHEMA", "OBJECT_NAME", "index_name", "COUNT_READ", "COUNT_INSERT", "COUNT_UPDATE", "COUNT_DELETE", "total_operations", "read_latency_sec"],
+          "note": "Shows read/write activity per index. High read counts indicate frequently used indexes. Indexes with zero reads but high writes are candidates for removal. Use this data to identify hot indexes and optimize query patterns.",
+          "default_note": "No index I/O statistics available"
+        }
+      ]
+    },
+    {
+      "name": "Security Configuration",
+      "number": "8",
+      "short_name": "Security",
+      "note": "Security is critical. Accounts without passwords, users with excessive privileges, and disabled SSL are major vulnerabilities. Regular security audits prevent breaches.",
+      "subsections": [
+        {
+          "name": "Locked Accounts",
+          "source": "locked_accounts",
+          "columns": ["user", "host", "account_locked"],
+          "note": "MySQL supports locking and unlocking user accounts. If a client attempts to connect to a locked account, the attempt fails.",
+          "default_note": "No locked accounts"
+        },
+        {
+          "name": "Accounts with Expired Passwords",
+          "source": "expired_passwords",
+          "columns": ["user", "host", "password_expired", "password_last_changed"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "note": "If the account password is expired the server either disconnects the client or restricts the operations permitted to it. References: <a href=\"https://dev.mysql.com/doc/mysql-security-excerpt/8.0/en/password-management.html#password-expiration-policy\" target=\"_blank\">password-expiration-policy</a>, <a href=\"https://dev.mysql.com/doc/mysql-security-excerpt/8.0/en/expired-password-handling.html\" target=\"_blank\">expired-password-handling</a>",
+          "default_note": "No accounts with expired passwords"
+        },
+        {
+          "name": "Accounts with Empty Passwords",
+          "source": "empty_passwords",
+          "columns": ["User", "Host"],
+          "note": "Accounts without passwords are a critical security vulnerability. Results exclude accounts using socket authentication and those that are locked with expired passwords (likely roles). Validate results and set strong passwords for actual user accounts.",
+          "default_note": "No accounts with empty passwords - good!"
+        },
+        {
+          "name": "Accounts with Wildcard Hosts",
+          "source": "wildcard_hosts",
+          "columns": ["User", "Host"],
+          "note": "Wildcard hosts (%) allow connections from any IP address. Restrict to specific hosts or IP ranges for better security.",
+          "default_note": "No accounts with wildcard hosts"
+        },
+        {
+          "name": "Users with Elevated Privileges",
+          "source": "elevated_privileges_users",
+          "columns": ["User", "Host", "Privileges"],
+          "note": "Users with SUPER, ALL, or administrative privileges have full database control. Follow the principle of least privilege - grant only the permissions required for each user's role.",
+          "default_note": "No users with elevated privileges (excluding system accounts)"
+        },
+        {
+          "name": "SSL Configuration",
+          "source": "ssl_config",
+          "columns": ["Variable_name", "Value"],
+          "note": "SSL/TLS encrypts data in transit to prevent eavesdropping and man-in-the-middle attacks. Enable require_secure_transport=ON to enforce encrypted connections for all clients."
+        },
+        {
+          "name": "SSL Certificate Expiry",
+          "source": "ssl_certificate_expiry",
+          "columns": ["cert_valid_from", "cert_expires"],
+          "display_type": "cards",
+          "note": "Monitor certificate expiration dates. Expired certificates will cause connection failures. Plan certificate renewal before expiry.",
+          "default_note": "SSL certificate information not available"
+        },
+        {
+          "name": "Current SSL Connection Status",
+          "source": "ssl_connection_status",
+          "columns": ["total_connections", "ssl_connections", "non_ssl_connections"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "display_type": "cards",
+          "default_note": "SSL connection status not available (Performance Schema may be disabled)"
+        },
+        {
+          "name": "SSL Connection Details per Thread",
+          "source": "ssl_connection_per_thread",
+          "columns": ["THREAD_ID", "user", "host", "CONNECTION_TYPE", "ssl_version"],
+          "note": "Connections not showing SSL/TLS version are not encrypted. Enable require_secure_transport=ON to enforce encryption for all connections."
+        },
+        {
+          "name": "Accounts with Weak Authentication Plugins",
+          "source": "weak_auth_plugins",
+          "columns": ["User", "Host", "plugin"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "note": "Accounts using mysql_native_password are less secure than caching_sha2_password (MySQL 8.0+ default). Consider upgrading authentication plugins for better security.",
+          "default_note": "All accounts use strong authentication plugins"
+        },
+        {
+          "name": "Users with GRANT OPTION",
+          "source": "users_with_grant_option",
+          "columns": ["User", "Host"],
+          "note": "Users with GRANT OPTION can delegate their privileges to other users, potentially escalating access beyond intended scope. Review whether these users need this capability.",
+          "default_note": "No users with GRANT OPTION (excluding system accounts)"
+        },
+        {
+          "name": "Anonymous Accounts",
+          "source": "anonymous_accounts",
+          "columns": ["User", "Host", "password_status"],
+          "note": "Anonymous accounts (empty username) allow anyone to connect without specifying a username. This is a critical security vulnerability. Remove immediately.",
+          "default_note": "No anonymous accounts - good!"
+        },
+        {
+          "name": "Database-Level Privileges to Sensitive Schemas",
+          "source": "sensitive_schema_access",
+          "columns": ["User", "Host", "Db", "Select_priv", "Insert_priv", "Update_priv", "Delete_priv"],
+          "note": "Direct access to mysql, performance_schema, or sys schemas can expose sensitive data or allow privilege escalation. Users with '*' in Db column have global privileges (ON *.*) which inherit access to all schemas including sensitive ones. Most applications should not need direct access to system schemas.",
+          "default_note": "No users with direct access to sensitive schemas"
+        },
+        {
+          "name": "Users with Password Older than 6 Months",
+          "source": "users_old_passwords",
+          "columns": ["user", "host", "password_last_changed", "password_age_days"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "note": "Passwords older than 6 months may indicate stale credentials or lack of password rotation policy. Regular password rotation reduces the risk of compromised credentials being used long-term. Consider implementing automatic password expiration using ALTER USER ... PASSWORD EXPIRE INTERVAL.",
+          "default_note": "No users with passwords older than 6 months"
+        }
+      ]
+    },
+
+    {
+      "name": "Connection Management",
+      "number": "9",
+      "short_name": "Connections",
+      "subsections": [
+        {
+          "name": "Connection Statistics",
+          "source": "connection_stats",
+          "columns": ["Variable_name", "Value"],
+          "note": "Shows key connection metrics including max_connections, Total connections, and connection errors. High Aborted_connects may indicate authentication issues or network problems."
+        },
+        {
+          "name": "Connections by User",
+          "source": "connections_by_user",
+          "columns": ["USER", "CURRENT_CONNECTIONS", "TOTAL_CONNECTIONS"],
+          "note": "Identifies which users have the most connections. Helps detect connection leaks or applications not properly closing connections.",
+          "default_note": "No active user connections"
+        },
+        {
+          "name": "Connection Breakdown by State",
+          "source": "connection_breakdown_by_state",
+          "columns": ["state", "count", "pct_of_total"],
+          "note": "Shows what connections are doing. Many connections in 'Sending data' or 'Sorting result' may indicate slow queries.",
+          "default_note": "No active connections"
+        },
+        {
+          "name": "Connection Breakdown by Command",
+          "source": "connection_breakdown_by_command",
+          "columns": ["command", "count", "pct_of_total"],
+          "note": "Shows connection activity types. High 'Sleep' count indicates idle connections that could be closed. 'Query' shows actively executing statements.",
+          "default_note": "No active connections"
+        },
+        {
+          "name": "Connection Breakdown by Time",
+          "source": "connection_breakdown_by_time",
+          "columns": ["time_range", "count"],
+          "note": "Shows connection age distribution. Many old connections may indicate connection pooling issues or connections not being properly released.",
+          "default_note": "No active connections"
+        },
+        {
+          "name": "Connection Attributes",
+          "source": "connection_attributes",
+          "columns": ["PROCESSLIST_ID", "user_host", "client_name", "client_version", "os", "program_name"],
+          "note": "Shows client application details. Useful for identifying how applications are connecting and their versions."
+        },
+        {
+          "name": "Long-Running Idle Connections (>5 min)",
+          "source": "long_running_idle_connections",
+          "columns": ["PROCESSLIST_ID", "PROCESSLIST_USER", "PROCESSLIST_HOST", "PROCESSLIST_DB", "idle_seconds", "PROCESSLIST_STATE"],
+          "note": "Idle connections consume resources and count against max_connections. Consider implementing connection timeouts or reviewing application connection pooling.",
+          "default_note": "No idle connections older than 5 minutes",
+          "fallback_source": "long_running_idle_connections_is",
+          "fallback_columns": ["PROCESSLIST_ID", "PROCESSLIST_USER", "PROCESSLIST_HOST", "PROCESSLIST_DB", "idle_seconds", "PROCESSLIST_STATE"],
+          "fallback_requires_extended_checks": true,
+          "extended_checks_disabled_note": "Performance Schema is disabled. Enable --extended-checks to query information_schema.processlist for idle connections (may cause brief contention on busy systems)."
+        },
+        {
+          "name": "Long Running Queries",
+          "source": "long_running_queries_pfs",
+          "columns": ["ID", "USER", "HOST", "DB", "COMMAND", "TIME", "STATE", "query_preview"],
+          "note": "Queries running over 60 seconds often indicate performance issues. Review query plans and consider adding indexes or optimizing the SQL.",
+          "default_note": "No long-running queries (>60 seconds)",
+          "fallback_source": "long_running_queries",
+          "fallback_columns": ["ID", "USER", "HOST", "DB", "COMMAND", "TIME", "STATE", "query_preview"],
+          "fallback_requires_extended_checks": true,
+          "extended_checks_disabled_note": "Performance Schema is disabled. Enable --extended-checks to query information_schema.processlist for long running queries (may cause brief contention on busy systems)."
+        },
+        {
+          "name": "Long Running Transactions",
+          "source": "long_running_transactions",
+          "columns": ["transaction_duration", "connection_id", "thread_id", "isolation_level", "autocommit", "database_name", "current_query", "rows_examined", "rows_affected", "rows_sent", "statement_state", "statement_time_sec"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "note": "Shows transactions running longer than 10 minutes. Long running transactions, even sleeping or stalled ones, block the purge process and cause the History List Length (HLL) to grow continuously for the entire life of that transaction. Requires events_transactions_current consumer to be enabled in performance_schema. Reference: https://lefred.be/content/a-graph-a-day-keeps-the-doctor-away-mysql-history-list-length/",
+          "default_note": "No long-running transactions (>10 minutes)",
+          "fallback_source": "long_running_transactions_is",
+          "fallback_columns": ["transaction_id", "state", "started", "duration_seconds", "connection_id", "tables_locked", "rows_locked", "rows_modified", "current_query"],
+          "fallback_requires_extended_checks": true,
+          "extended_checks_disabled_note": "Performance Schema is disabled. Enable --extended-checks to query information_schema.innodb_trx for long running transactions (may cause contention on busy production systems)."
+        },
+        {
+          "name": "Connection Usage",
+          "source": "health_connection_usage",
+          "columns": ["connection_usage_pct"],
+          "display_type": "metric_cards",
+          "note": "Shows percentage of max_connections in use. Above 80% is a warning sign. Consider increasing max_connections or optimizing connection usage.",
+          "default_note": "Connection usage metrics not available"
+        }
+      ]
+    },
+
+    {
+      "name": "Lock Analysis",
+      "number": "10",
+      "short_name": "Locks",
+      "note": "Lock contention slows queries and can cause timeouts. Deadlocks cause transaction rollbacks. Metadata locks block DDL operations. Understanding lock patterns helps optimize concurrency.",
+      "subsections": [
+        {
+          "name": "Lock Configuration",
+          "source": "lock_config",
+          "columns": ["Parameter", "Value", "Details"],
+          "note": "Shows lock timeout settings. innodb_lock_wait_timeout controls how long transactions wait for row locks. innodb_deadlock_detect enables automatic deadlock detection."
+        },
+        {
+          "name": "InnoDB Lock Statistics",
+          "source": "innodb_lock_stats",
+          "columns": ["Variable_name", "Value", "Details"],
+          "note": "Shows cumulative lock statistics since server start. High row_lock_waits or row_lock_time indicate contention issues."
+        },
+        {
+          "name": "Deadlock Count",
+          "source": "deadlock_count",
+          "columns": ["deadlock_count"],
+          "condition": {"engine": ["mysql", "aurora-mysql", "mariadb"]},
+          "note": "Total deadlocks since server start. Frequent deadlocks indicate transaction ordering issues. Review application logic to access tables in consistent order.",
+          "default_note": "No deadlocks detected"
+        },
+        {
+          "name": "Current Data Locks",
+          "source": "current_data_locks",
+          "columns": ["ENGINE_TRANSACTION_ID", "THREAD_ID", "OBJECT_SCHEMA", "OBJECT_NAME", "INDEX_NAME", "LOCK_TYPE", "LOCK_MODE", "LOCK_STATUS", "LOCK_DATA"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "requires_extended_checks": true,
+          "note": "Shows active row-level locks. LOCK_STATUS 'WAITING' indicates blocked transactions. Identify blocking transactions and optimize or terminate them.",
+          "default_note": "No active data locks",
+          "extended_checks_disabled_note": "Extended checks disabled. Querying data locks may cause contention on production systems. Use --extended-checks to enable."
+        },
+        {
+          "name": "Lock Waits",
+          "source": "lock_waits",
+          "columns": ["waiting_trx", "blocking_trx", "waiting_thread", "blocking_thread"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "requires_extended_checks": true,
+          "note": "Shows transactions waiting for locks held by other transactions. Identify the blocking transaction and investigate the query causing the block.",
+          "default_note": "No lock waits currently",
+          "extended_checks_disabled_note": "Extended checks disabled. Querying lock waits may cause contention on production systems. Use --extended-checks to enable."
+        },
+        {
+          "name": "Metadata Locks",
+          "source": "metadata_locks",
+          "columns": ["OBJECT_TYPE", "OBJECT_SCHEMA", "OBJECT_NAME", "LOCK_TYPE", "LOCK_DURATION", "LOCK_STATUS", "OWNER_THREAD_ID"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "note": "Metadata locks protect schema objects during DDL operations. Long-held metadata locks can block ALTER TABLE and other DDL statements.",
+          "default_note": "No metadata locks on user objects"
+        }
+      ]
+    },
+    {
+      "name": "I/O Analysis",
+      "number": "11",
+      "short_name": "I/O Analysis",
+      "note": "I/O operations are typically the slowest part of database operations. Identifying tables and files with high I/O helps pinpoint performance bottlenecks and guides optimization efforts.",
+      "subsections": [
+        {
+          "name": "Table I/O Statistics",
+          "source": "table_io_stats",
+          "columns": ["OBJECT_SCHEMA", "OBJECT_NAME", "COUNT_READ", "COUNT_WRITE", "READ_LATENCY_MS", "WRITE_LATENCY_MS"],
+          "note": "Shows read/write operations and latency per table. Helps identify tables causing I/O bottlenecks.",
+          "default_note": "No table I/O statistics available"
+        },
+        {
+          "name": "File I/O Statistics",
+          "source": "file_io_stats",
+          "columns": ["FILE_NAME", "COUNT_READ", "COUNT_WRITE", "SUM_NUMBER_OF_BYTES_READ", "SUM_NUMBER_OF_BYTES_WRITE", "READ_LATENCY_MS", "WRITE_LATENCY_MS"],
+          "note": "Shows I/O operations at the file level. Useful for identifying hot data files and redo log activity.",
+          "default_note": "No file I/O statistics available"
+        },
+        {
+          "name": "High Read Tables",
+          "source": "high_read_tables",
+          "columns": ["OBJECT_SCHEMA", "OBJECT_NAME", "COUNT_READ", "READ_LATENCY_MS"],
+          "note": "Tables with the most read operations. Consider caching strategies or read replicas for these tables.",
+          "default_note": "No high-read tables detected"
+        },
+        {
+          "name": "High Write Tables",
+          "source": "high_write_tables",
+          "columns": ["OBJECT_SCHEMA", "OBJECT_NAME", "COUNT_WRITE", "WRITE_LATENCY_MS"],
+          "note": "Tables with the most write operations. High write activity may benefit from batching or partitioning.",
+          "default_note": "No high-write tables detected"
+        },
+        {
+          "name": "High Latency Tables",
+          "source": "high_latency_tables",
+          "columns": ["OBJECT_SCHEMA", "OBJECT_NAME", "TOTAL_LATENCY_MS", "TOTAL_OPERATIONS"],
+          "note": "Tables with the highest I/O latency. Investigate storage performance or query optimization for these tables.",
+          "default_note": "No high-latency tables detected"
+        },
+        {
+          "name": "I/O by Event Type",
+          "source": "io_by_event_type",
+          "columns": ["EVENT_NAME", "TOTAL_OPERATIONS", "BYTES_READ", "BYTES_WRITTEN", "TOTAL_LATENCY_MS"],
+          "note": "Shows I/O distribution by event type (data files, redo logs, temp files). Helps identify I/O patterns.",
+          "default_note": "No I/O event statistics available"
+        },
+        {
+          "name": "I/O by Index - Index Usage Patterns",
+          "source": "io_by_index",
+          "columns": ["Schema", "Table", "Index Name", "Read Count", "Insert Count", "Update Count", "Delete Count", "Total Operations", "Read Latency (ms)"],
+          "note": "Shows which indexes are being used and their I/O activity. Helps identify hot indexes and unused indexes.",
+          "result_note": "Key Insight: Indexes with high read counts are heavily used for queries. Indexes with zero operations (not shown above) may be candidates for removal. Compare with the \"Unused Indexes\" section in Index Optimization.",
+          "default_note": "No index I/O statistics available"
+        }
+      ]
+    },
+
+    {
+      "name": "Database Objects",
+      "number": "12",
+      "short_name": "DB Objects",
+      "subsections": [
+        {
+          "name": "Schema Object Overview",
+          "source": "schema_object_overview",
+          "columns": ["schema_name", "object_type", "count"],
+          "note": "Summary of all database objects grouped by schema and type. Provides a quick inventory of tables, views, indexes, procedures, functions, triggers, and events across all schemas.",
+          "default_note": "Schema object overview not available (requires sys schema)"
+        },
+        {
+          "name": "Databases",
+          "source": "database_list",
+          "columns": ["database_name"],
+          "note": "Lists all databases on the server. System databases (mysql, information_schema, performance_schema, sys) are excluded."
+        },
+        {
+          "name": "Triggers",
+          "source": "triggers",
+          "columns": ["TRIGGER_SCHEMA", "TRIGGER_NAME", "EVENT_MANIPULATION", "EVENT_OBJECT_TABLE", "ACTION_TIMING"],
+          "note": "Triggers execute automatically on INSERT/UPDATE/DELETE. They add overhead and can cause unexpected behavior. Document and review regularly.",
+          "default_note": "No triggers defined"
+        },
+        {
+          "name": "Events",
+          "source": "events",
+          "columns": ["EVENT_SCHEMA", "EVENT_NAME", "STATUS", "EVENT_TYPE", "INTERVAL_VALUE", "INTERVAL_FIELD", "LAST_EXECUTED"],
+          "note": "Scheduled events run automatically at specified intervals. Ensure events are enabled (event_scheduler=ON) and monitor execution status.",
+          "default_note": "No scheduled events defined",
+          "result_note": "⚠️ If event_scheduler is OFF, these events will not execute. Check event_scheduler status in Server Configuration section."
+        },
+        {
+          "name": "Stored Procedures",
+          "source": "procedures",
+          "columns": ["ROUTINE_SCHEMA", "ROUTINE_NAME", "ROUTINE_TYPE", "CREATED", "LAST_ALTERED"],
+          "note": "Stored procedures encapsulate business logic in the database. Review for performance and security implications.",
+          "default_note": "No stored procedures defined"
+        },
+        {
+          "name": "Functions",
+          "source": "functions",
+          "columns": ["ROUTINE_SCHEMA", "ROUTINE_NAME", "ROUTINE_TYPE", "CREATED", "LAST_ALTERED"],
+          "note": "User-defined functions extend SQL capabilities. Ensure they are deterministic when used in replication environments.",
+          "default_note": "No user-defined functions"
+        },
+        {
+          "name": "Foreign Key Constraints",
+          "source": "foreign_keys",
+          "columns": ["CONSTRAINT_SCHEMA", "TABLE_NAME", "CONSTRAINT_NAME", "REFERENCED_TABLE_SCHEMA", "REFERENCED_TABLE_NAME", "UPDATE_RULE", "DELETE_RULE"],
+          "note": "Foreign keys enforce referential integrity. CASCADE rules can cause unexpected mass updates/deletes. Review DELETE_RULE and UPDATE_RULE carefully.",
+          "default_note": "No foreign key constraints defined"
+        },
+        {
+          "name": "Partitioned Tables",
+          "source": "partitioned_tables",
+          "columns": ["TABLE_SCHEMA", "TABLE_NAME", "PARTITION_NAME", "PARTITION_METHOD", "PARTITION_EXPRESSION", "TABLE_ROWS"],
+          "note": "Partitioning improves query performance and maintenance for large tables. Ensure partition pruning is effective for your queries.",
+          "default_note": "No partitioned tables"
+        }
+      ]
+    },
+
+    {
+      "name": "SQL Performance",
+      "number": "13",
+      "short_name": "SQL Performance",
+      "subsections": [
+        {
+          "name": "Top Queries by Execution Time",
+          "source": "top_queries_by_time",
+          "columns": ["DIGEST_TEXT", "COUNT_STAR", "TOTAL_TIME_MS", "AVG_TIME_MS", "SUM_ROWS_EXAMINED", "SUM_ROWS_SENT"],
+          "note": "Queries consuming the most total execution time. Focus optimization efforts on these queries for maximum impact.",
+          "default_note": "No query statistics available"
+        },
+        {
+          "name": "Query Latency Percentiles",
+          "source": "query_latency_percentiles",
+          "columns": ["DIGEST_TEXT", "COUNT_STAR", "min_ms", "avg_ms", "max_ms"],
+          "note": "Shows min/avg/max latency distribution. Large gaps between avg and max indicate inconsistent query performance.",
+          "default_note": "No query statistics available"
+        },
+        {
+          "name": "Query Latency P95",
+          "source": "query_latency_p95",
+          "columns": ["SCHEMA_NAME", "query_digest", "exec_count", "avg_ms", "p95_ms", "p95_avg_ratio", "max_ms"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "note": "95th percentile latency - 95% of executions complete faster than this. High P95/avg ratio indicates outlier slow executions.",
+          "default_note": "No queries with sufficient execution count (>10)"
+        },
+        {
+          "name": "Query Latency P99",
+          "source": "query_latency_p99",
+          "columns": ["SCHEMA_NAME", "query_digest", "exec_count", "avg_ms", "p99_ms", "p99_avg_ratio", "max_ms"],
+          "condition": {"engine": ["mysql", "aurora-mysql"]},
+          "note": "99th percentile latency - 99% of executions complete faster than this. Critical for SLA monitoring.",
+          "default_note": "No queries with sufficient execution count (>10)"
+        },
+        {
+          "name": "Queries with Errors",
+          "source": "queries_with_errors",
+          "columns": ["SCHEMA_NAME", "query_digest", "exec_count", "SUM_ERRORS", "SUM_WARNINGS"],
+          "note": "Queries generating errors or warnings. Investigate and fix to improve application reliability.",
+          "default_note": "No queries with errors or warnings"
+        },
+        {
+          "name": "Full Table Scans",
+          "source": "full_table_scans",
+          "columns": ["DIGEST_TEXT", "COUNT_STAR", "SUM_NO_INDEX_USED", "SUM_NO_GOOD_INDEX_USED", "SUM_ROWS_EXAMINED"],
+          "note": "Queries not using indexes effectively. Add appropriate indexes or rewrite queries to avoid scanning entire tables.",
+          "default_note": "No queries with full table scans detected"
+        },
+        {
+          "name": "Queries Creating Temp Tables on Disk",
+          "source": "temp_tables_on_disk",
+          "columns": ["DIGEST_TEXT", "COUNT_STAR", "SUM_CREATED_TMP_TABLES", "SUM_CREATED_TMP_DISK_TABLES"],
+          "note": "Disk temp tables are much slower than memory. Optimize queries or increase tmp_table_size/max_heap_table_size.",
+          "default_note": "No queries creating temp tables on disk"
+        },
+        {
+          "name": "Statement Analysis (sys schema)",
+          "source": "sys_statement_analysis",
+          "columns": ["db", "query_snippet", "exec_count", "total_latency", "avg_latency", "max_latency", "rows_examined_avg", "tmp_tables"],
+          "note": "Comprehensive query analysis from sys schema. Shows execution patterns, latency, and resource usage.",
+          "default_note": "No data available"
+        },
+        {
+          "name": "Full Table Scans (sys schema)",
+          "source": "sys_full_table_scans",
+          "columns": ["db", "query_snippet", "exec_count", "total_latency", "no_index_used_count", "rows_sent_avg", "rows_examined_avg"],
+          "note": "Queries performing full table scans. These are prime candidates for index optimization.",
+          "default_note": "No full table scans"
+        },
+        {
+          "name": "Tables with Full Table Scans (sys schema)",
+          "source": "sys_tables_full_scans",
+          "columns": ["object_schema", "object_name", "rows_full_scanned", "latency"],
+          "note": "Tables being fully scanned. Consider adding indexes or reviewing query patterns accessing these tables.",
+          "default_note": "No tables with full scans"
+        },
+        {
+          "name": "Statements with Sorting (sys schema)",
+          "source": "sys_statements_with_sorting",
+          "columns": ["db", "query_snippet", "exec_count", "total_latency", "sort_merge_passes", "avg_sort_merges", "rows_sorted"],
+          "note": "Queries requiring sort operations. High sort_merge_passes indicate sorts spilling to disk - consider indexes or increasing sort_buffer_size.",
+          "default_note": "No statements with sorting"
+        },
+        {
+          "name": "Statements with Temp Tables (sys schema)",
+          "source": "sys_statements_with_temp_tables",
+          "columns": ["db", "query_snippet", "exec_count", "total_latency", "memory_tmp_tables", "disk_tmp_tables"],
+          "note": "Queries creating temporary tables. Disk temp tables indicate complex queries that may need optimization.",
+          "default_note": "No statements with temp tables"
+        },
+        {
+          "name": "Tables Without Primary Key Count",
+          "source": "health_tables_without_pk",
+          "columns": ["tables_without_pk"],
+          "note": "Count of tables missing primary keys. See Table Analysis section for details on affected tables."
+        }
+      ]
+    },
+
+    {
+      "name": "Database User Activity",
+      "number": "14",
+      "short_name": "User Activity",
+      "note": "Understanding user behavior helps identify connection leaks, problematic applications, and unused accounts. Accounts not properly closing connections waste resources.",
+      "subsections": [
+        {
+          "name": "Connection Errors by Host",
+          "source": "connection_errors_by_host",
+          "columns": ["HOST", "SUM_CONNECT_ERRORS", "FIRST_SEEN", "LAST_SEEN"],
+          "default_note": "No connection errors recorded"
+        },
+        {
+          "name": "Statement Errors by User",
+          "source": "statement_errors_by_user",
+          "columns": ["USER", "HOST", "SUM_ERRORS", "SUM_WARNINGS"],
+          "default_note": "No statement errors recorded"
+        },
+        {
+          "name": "Accounts Not Closing Connections",
+          "source": "accounts_not_closing_connections",
+          "columns": ["user", "host", "total_connections", "not_closed", "pct_not_closed"],
+          "default_note": "All accounts properly closing connections"
+        },
+        {
+          "name": "Accounts Never Connected Since Restart",
+          "source": "accounts_never_connected",
+          "columns": ["USER", "HOST"],
+          "note": "Unused user accounts (not roles) should be reviewed and potentially removed. In MySQL, there is no clear distinction between roles and users based on stored metadata. So, validate the results and review only user accounts.",
+          "default_note": "All accounts have connected since server restart",
+          "result_note": "The result excludes accounts with authentication_string!='' AND password_expired='N' AND account_locked='N' which are most likely created as roles."
+        }
+      ]
+    }
+  ]
+}
